@@ -1,14 +1,18 @@
 import React,{useState} from 'react'
 import {getMovies} from '../services/fakeMovieService'
-import Like from './common/like'
+import { getGenres } from '../services/fakeGenreService'
 import Pagination from './common/pagination'
 import Paginate from '../utils/paginate'
+import ListGroup from './common/listGroup'
+import MoviesTable from './moviesTable'
 
 function Movies() {
 
     const [allMovies, setAllMovies] = useState(getMovies())
+    const [genres, setGenres] = useState([{_id:'',name:'All Genres'},...getGenres()])
     const [pageSize, setPageSize] = useState(3)
     const [currentPage, setCurrentPage] = useState(1)
+    const [selectedGenre, setSelectedGenre] = useState('')
 
     //delete
     const handleDelete=(id)=>{ 
@@ -33,61 +37,58 @@ function Movies() {
         setCurrentPage(page)
     }
 
+    //genre
+    const handleGenreSelect=(genre)=>{
+        setSelectedGenre(genre)
+        setCurrentPage(1)
+    }
+
+    //sort
+    const handleSort=(path)=>{
+        console.log(path)
+    }
+
     const {length:count}=allMovies
-    const movies=Paginate(allMovies,currentPage,pageSize)
+
+    const filtered=selectedGenre &&selectedGenre._id ? allMovies.filter(movie=> movie.genre._id ===selectedGenre._id):allMovies;
+    const movies=Paginate(filtered,currentPage,pageSize)
 
 
     return (
-        <>
-            {count===0?(
-            <p>No Movie in our data base</p>
-                        ):(<>
-            <p>Showing {count} movies in data base.</p>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Title</th>
-                        <th scope="col">Genre</th>
-                        <th scope="col">Stock</th>
-                        <th scope="col">Rate</th>
-                        <th/>
-                        <th/>
-                    </tr>
-                </thead>
-            <tbody>
-            {movies.map(movie=>(
-                <tr key={movie._id}>
-                <td>{movie.title}</td> 
-                <td>{movie.genre.name}</td> 
-                <td>{movie.numberInStock}</td> 
-                <td>{movie.dailyRentalRate}</td> 
-                <td>
-                <Like liked={movie.liked} onLike={()=>handleLike(movie)}/>
-                </td>
+        <div className='row'>
 
-                <td>
-                    <button type="button" className="btn btn-danger"
-                    onClick={()=>handleDelete(movie._id)}>
-                    Delete                    
-                    </button>
-                </td> 
-                </tr>
+            <div className="col-3">
+                <ListGroup items={genres} onItemSelect={handleGenreSelect}
+                selectedItem={selectedGenre}
+                />
+            </div>
 
-            ))      
-            }
+            <div className="col">
 
-            </tbody>
-            </table>
-            <Pagination 
-                itemsCount={count}
-                pageSize={pageSize} 
-                onPageChange={handlePageChange}
-                currentPage={currentPage}
-            />
+                {count===0?(
+                <p>No Movie in our data base</p>
+                            ):(<>
+                <p>Showing {filtered.length} movies in data base.</p>
+
+                <MoviesTable
+                    movies={movies} 
+                    onLike={handleLike }
+                    onDelete={handleDelete}
+                    onSort={handleSort}
+                />
+                
+                <Pagination 
+                    itemsCount={filtered.length}
+                    pageSize={pageSize} 
+                    onPageChange={handlePageChange}
+                    currentPage={currentPage}
+                />
 
            </>
-           )}
-        </>
+           )}  
+            </div>
+
+        </div>
     )
 }
 
