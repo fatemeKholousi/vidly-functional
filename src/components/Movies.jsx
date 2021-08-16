@@ -1,35 +1,48 @@
 import React,{useState} from 'react'
 import {getMovies} from '../services/fakeMovieService'
 import Like from './common/like'
+import Pagination from './common/pagination'
+import Paginate from '../utils/paginate'
 
 function Movies() {
 
-    const [movies, setMovies] = useState(getMovies())
+    const [allMovies, setAllMovies] = useState(getMovies())
+    const [pageSize, setPageSize] = useState(3)
+    const [currentPage, setCurrentPage] = useState(1)
 
+    //delete
     const handleDelete=(id)=>{ 
-        const moviesCopy=[...movies]
+        const moviesCopy=[...allMovies]
         const newMovieList=moviesCopy.filter(item => item._id!==id)
-        setMovies(newMovieList) 
+        setAllMovies(newMovieList) 
             }
 
     //deep copy + change
     const handleLike=(movie)=>{
-        const movies2=[...movies]
+        const movies2=[...allMovies]
         const index=movies2.indexOf(movie)
         movies2[index]={...movies2[index]}
         //toggle
         movies2[index].liked=!movies2[index].liked
         //important part
-        setMovies(movies2)
+        setAllMovies(movies2)
     }
 
-    const {length:counter}=movies
+    //active pagination buttons
+    const handlePageChange=(page)=>{
+        setCurrentPage(page)
+    }
+
+    const {length:count}=allMovies
+    const movies=Paginate(allMovies,currentPage,pageSize)
+
+
     return (
         <>
-            {counter===0?(
+            {count===0?(
             <p>No Movie in our data base</p>
                         ):(<>
-            <p>Showing {counter} movies in data base.</p>
+            <p>Showing {count} movies in data base.</p>
             <table className="table">
                 <thead>
                     <tr>
@@ -45,7 +58,7 @@ function Movies() {
             {movies.map(movie=>(
                 <tr key={movie._id}>
                 <td>{movie.title}</td> 
-                {/* <td>{movie.genre.name}</td>  */}
+                <td>{movie.genre.name}</td> 
                 <td>{movie.numberInStock}</td> 
                 <td>{movie.dailyRentalRate}</td> 
                 <td>
@@ -62,8 +75,16 @@ function Movies() {
 
             ))      
             }
+
             </tbody>
             </table>
+            <Pagination 
+                itemsCount={count}
+                pageSize={pageSize} 
+                onPageChange={handlePageChange}
+                currentPage={currentPage}
+            />
+
            </>
            )}
         </>
