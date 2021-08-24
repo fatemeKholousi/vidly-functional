@@ -1,44 +1,32 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import Like from './common/like'
+import Table from './common/table'
 
-function MoviesTable({movies,onLike,onDelete,onSort}) {
+function MoviesTable({movies,onLike,onDelete,onSort,sortColumn}) {
+
+    const columns=[
+        {path:'title', label:'Title',content:movie=> (<Link to={`/movies/${movie._id}`}>{movie.title}</Link>)},
+        {path:'genre.name', label:'Genre'},
+        {path:'numberInStock', label:'Stock'},
+        {path:'dailyRentalRate', label:'Rate'},
+        // for like and delete column header
+        {  key:'like',
+            content:item=><Like liked={item.liked} onLike={()=>onLike(item)}/>
+        },
+        {
+            key:'delete',
+            content:item=> 
+            <button type="button" className="btn btn-danger"
+            onClick={()=>onDelete(item._id)}>
+            Delete                    
+            </button>
+        }   
+    ]
+
     return (
         <>
-              <table className="table">
-                <thead>
-                    <tr>
-                        <th  onClick={()=>onSort('title')} scope="col">Title</th>
-                        <th  onClick={()=>onSort('genre.name')} scope="col">Genre</th>
-                        <th  onClick={()=>onSort('numberInStock')} scope="col">Stock</th>
-                        <th  onClick={()=>onSort('dailyRentalRate')} scope="col">Rate</th>
-                        <th/>
-                        <th/>
-                    </tr>
-                </thead>
-            <tbody>
-            {movies.map(movie=>(
-                <tr key={movie._id}>
-                <td>{movie.title}</td> 
-                <td>{movie.genre.name}</td> 
-                <td>{movie.numberInStock}</td> 
-                <td>{movie.dailyRentalRate}</td> 
-                <td>
-                <Like liked={movie.liked} onLike={()=>onLike(movie)}/>
-                </td>
-
-                <td>
-                    <button type="button" className="btn btn-danger"
-                    onClick={()=>onDelete(movie._id)}>
-                    Delete                    
-                    </button>
-                </td> 
-                </tr>
-
-            ))      
-            }
-
-            </tbody>
-            </table>
+              <Table columns={columns} movies={movies} sortColumn={sortColumn} onSort={onSort}/>
         </>
     )
 }

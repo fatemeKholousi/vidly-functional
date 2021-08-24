@@ -5,6 +5,7 @@ import Pagination from './common/pagination'
 import Paginate from '../utils/paginate'
 import ListGroup from './common/listGroup'
 import MoviesTable from './moviesTable'
+import _ from 'lodash'
 
 function Movies() {
 
@@ -13,6 +14,7 @@ function Movies() {
     const [pageSize, setPageSize] = useState(3)
     const [currentPage, setCurrentPage] = useState(1)
     const [selectedGenre, setSelectedGenre] = useState('')
+    const [sortColumn, setSortColumn] = useState({path:'title',order:'asc'})
 
     //delete
     const handleDelete=(id)=>{ 
@@ -44,14 +46,17 @@ function Movies() {
     }
 
     //sort
-    const handleSort=(path)=>{
-        console.log(path)
+    const handleSort=(sortColumn2)=>{
+        setSortColumn(sortColumn2)
     }
 
     const {length:count}=allMovies
 
     const filtered=selectedGenre &&selectedGenre._id ? allMovies.filter(movie=> movie.genre._id ===selectedGenre._id):allMovies;
-    const movies=Paginate(filtered,currentPage,pageSize)
+    
+    const sorted=_.orderBy(filtered,[sortColumn.path],[sortColumn.order])
+
+    const movies=Paginate(sorted,currentPage,pageSize)
 
 
     return (
@@ -73,6 +78,7 @@ function Movies() {
                 <MoviesTable
                     movies={movies} 
                     onLike={handleLike }
+                    sortColumn={sortColumn}
                     onDelete={handleDelete}
                     onSort={handleSort}
                 />

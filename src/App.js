@@ -1,12 +1,14 @@
 import React from "react";
-import Movies from "./components/Movies";
-
+import Navbar from "./components/navbar";
+import Routing from "./routing";
 function App() {
   return (
-    <main className="container">
-      <h1>Hi</h1>
-      <Movies />
-    </main>
+    <>
+      <Navbar />
+      <main className="container">
+        <Routing />
+      </main>
+    </>
   );
 }
 
