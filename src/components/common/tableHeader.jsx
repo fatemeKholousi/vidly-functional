@@ -2,28 +2,24 @@ import React from 'react'
 
 function TableHeader({columns, onSort, sortColumn}) {
        
-    const raiseSort=path=>
-    { 
-    const sortColumn2={...sortColumn};
-    if(sortColumn2.path===path){
-        sortColumn2.order=(sortColumn2.order==='asc'? 'desc':'asc')
-    }
-    else
-    { sortColumn2.order='asc';
-        sortColumn2.path=path;}
-        onSort(sortColumn2)
-    }
+    const raiseSort=path=>{ 
+        const sortColumn2={...sortColumn};
+        if(sortColumn2.path===path){
+            sortColumn2.order=(sortColumn2.order==='asc'? 'desc':'asc')
+            }
+        else { sortColumn2.order='asc';
+            sortColumn2.path=path;
+            }
+            onSort(sortColumn2)
+            }
 
-    const renderSortIcon=(column)=>{
+    const renderSortIcon=column=>{
         if(column.path!==sortColumn.path) return null;
         if(sortColumn.order==='asc') return <i className="fa fa-sort-asc"/>
         if(sortColumn.order==='desc') return <i className="fa fa-sort-desc"/>
-
-        
-
     }
-    return (
 
+    return (
 
             <thead>
             <tr>

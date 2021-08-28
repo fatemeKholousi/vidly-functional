@@ -6,6 +6,9 @@ import Paginate from '../utils/paginate'
 import ListGroup from './common/listGroup'
 import MoviesTable from './moviesTable'
 import _ from 'lodash'
+import { useHistory,Link } from 'react-router-dom'
+import Input from './common/input'
+import SearchBox from './common/searchBox'
 
 function Movies() {
 
@@ -74,6 +77,12 @@ function Movies() {
                 <p>No Movie in our data base</p>
                             ):(<>
                 <p>Showing {filtered.length} movies in data base.</p>
+
+                <Link to='/movies/new'
+                style={{marginBottom:'10px'}}
+                className="btn btn-primary">
+                    Add New Movie
+                </Link>
 
                 <MoviesTable
                     movies={movies} 

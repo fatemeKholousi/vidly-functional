@@ -5,9 +5,9 @@ function App() {
   return (
     <>
       <Navbar />
-      <main className="container">
-        <Routing />
-      </main>
+        <main className="container">
+          <Routing />
+        </main>
     </>
   );
 }
